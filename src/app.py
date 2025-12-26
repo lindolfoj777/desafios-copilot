@@ -1,3 +1,14 @@
+# Remover participante de uma atividade
+@app.delete("/activities/{activity_name}/participants/{email}")
+def remove_participant(activity_name: str, email: str):
+    """Remove um participante de uma atividade"""
+    if activity_name not in activities:
+        raise HTTPException(status_code=404, detail="Activity not found")
+    activity = activities[activity_name]
+    if email not in activity["participants"]:
+        raise HTTPException(status_code=404, detail="Participant not found in activity")
+    activity["participants"].remove(email)
+    return {"message": f"Removed {email} from {activity_name}"}
 """
 High School Management System API
 
@@ -26,6 +37,42 @@ activities = {
         "schedule": "Fridays, 3:30 PM - 5:00 PM",
         "max_participants": 12,
         "participants": ["michael@mergington.edu", "daniel@mergington.edu"]
+    },
+    "Basketball Team": {
+        "description": "Join the school basketball team and compete in local leagues",
+        "schedule": "Wednesdays and Fridays, 4:00 PM - 6:00 PM",
+        "max_participants": 15,
+        "participants": ["lucas@mergington.edu", "mia@mergington.edu"]
+    },
+    "Soccer Club": {
+        "description": "Practice soccer skills and play friendly matches",
+        "schedule": "Tuesdays, 4:00 PM - 5:30 PM",
+        "max_participants": 18,
+        "participants": ["liam@mergington.edu", "ava@mergington.edu"]
+    },
+    "Drama Club": {
+        "description": "Act, direct, and participate in school theater productions",
+        "schedule": "Thursdays, 3:30 PM - 5:30 PM",
+        "max_participants": 20,
+        "participants": ["noah@mergington.edu", "isabella@mergington.edu"]
+    },
+    "Art Workshop": {
+        "description": "Explore painting, drawing, and sculpture techniques",
+        "schedule": "Mondays, 3:30 PM - 5:00 PM",
+        "max_participants": 16,
+        "participants": ["amelia@mergington.edu", "benjamin@mergington.edu"]
+    },
+    "Debate Team": {
+        "description": "Develop public speaking and argumentation skills in competitions",
+        "schedule": "Fridays, 4:00 PM - 5:30 PM",
+        "max_participants": 10,
+        "participants": ["charlotte@mergington.edu", "elijah@mergington.edu"]
+    },
+    "Math Olympiad": {
+        "description": "Prepare for and participate in mathematics competitions",
+        "schedule": "Wednesdays, 3:30 PM - 5:00 PM",
+        "max_participants": 12,
+        "participants": ["william@mergington.edu", "harper@mergington.edu"]
     },
     "Programming Class": {
         "description": "Learn programming fundamentals and build software projects",
@@ -62,6 +109,10 @@ def signup_for_activity(activity_name: str, email: str):
     # Get the specific activity
     activity = activities[activity_name]
 
+# Validate student is not already signed up
+    if email in activity["participants"]:
+        raise HTTPException(status_code=400, detail="")
+    
     # Add student
     activity["participants"].append(email)
     return {"message": f"Signed up {email} for {activity_name}"}
